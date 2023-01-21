@@ -50,7 +50,7 @@ router.get("/allpost", (req, res) => {
 
 })
 router.get("/images", (req, res) => {
-    postData.find().then((ImageData) => {
+    postData.find().sort({ createdAt: -1 }).then((ImageData) => {
         res.status(200).send({
             images: ImageData,
         })

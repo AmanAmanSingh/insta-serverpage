@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 const cors = require("cors")
 
+mongoose.set('strictQuery', false);
 
 router.use(cors());
 router.use(express.json({ limit: '20mb', extended: true }));

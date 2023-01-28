@@ -18,6 +18,7 @@ router.post("/register",
     body("password").isAlphanumeric(),
     async (req, res) => {
         const { username, email, password } = req.body;
+        // console.log(req.body)
         try {
             //CHECK ALREADY EXIST 
             const isUserExist = await registerData.findOne({ email });

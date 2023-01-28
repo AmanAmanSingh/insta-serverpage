@@ -1,27 +1,86 @@
 const express = require("express");
 const app = express();
-const instapostRouter = require("./routes/insta-post")
-const cors = require("cors")
-const fileUpload = require("express-fileupload")
-
-const DB = 'mongodb+srv://aman:aman@cluster0.fwu27hk.mongodb.net/instaclone1?retryWrites=true&w=majority'
+const cors = require("cors");
+const fileUpload = require("express-fileupload");
+const jwt = require("jsonwebtoken");
+// const secret = "viratkohli";
+const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
+// ROUTES
+const instapostRouter = require("./routes/insta-post")
+const registerRouter = require("./routes/register")
+const loginRouter = require("./routes/login")
 
-mongoose.connect(DB, () => {
+
+//MONGOOSE CONNECTION
+mongoose.connect(process.env.DATABASE_URI, () => {
     console.log("connected sucessfully")
 }, (e) => {
     console.log(e.message)
 });
+mongoose.set('strictQuery', false);
 
+//Other MIDDELWARES
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
 app.use(cors());
 app.use(fileUpload())
 
-mongoose.set('strictQuery', false);
 
+//GET REQUEST FOR TESTING
 app.get("/", (req, res) => {
     res.send("working fine!!!")
 })
 
-app.use("/", instapostRouter)
+const unProtectedRout = ["/login", "/register"];
+
+app.use(async (req, res, next) => {
+    // console.log(req.url)
+    //UNPROTECTED ROUTES
+    if (req.url == "/login" || req.url == "/register") {
+        next();
+    } else {
+        //FOR PROTECTED ROUTES
+        const token = req.headers.authorization;
+        await jwt.verify(token, process.env.SECRET_KEY, async (err, decoded) => {
+            if (err) {
+                return res.status(400).json({
+                    message: "TOKEN expired"
+                })
+            }
+            req.user = decoded.data;
+            next()
+        })
+    }
+})
+
+
+
+
+
+
+
+// const token = req.headers.authorization;
+// if (token) {
+//     jwt.verify(token, secret, async (err, decoded) => {
+//         if (err) {
+//             return res.status(400).json({
+//                 message: "TOKEN expired"
+//             })
+//         }
+//         res.user = decoded.data;
+//         next()
+//     })
+// } else {
+//     res.status(400).json({
+//         message: "Token is not valid"
+//     })
+// }
+
+
+
+
+app.use("/", instapostRouter);
+app.use("/", registerRouter);
+app.use("/", loginRouter);
 app.listen(8081, () => { console.log("server started at port 8081") })

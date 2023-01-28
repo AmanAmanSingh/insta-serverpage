@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
-
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
 const instaPostSchema = new mongoose.Schema({
     image: {
         type: String,
-        required: true
     },
     author: {
         type: String,
@@ -24,6 +24,10 @@ const instaPostSchema = new mongoose.Schema({
     Date: {
         type: String,
         default: new Date().toDateString().slice(4)
+    },
+    user: {
+        type: ObjectId,
+        ref: "registerdata"
     }
 
 }, { timestamps: true })

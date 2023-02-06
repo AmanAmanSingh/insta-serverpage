@@ -45,7 +45,7 @@ app.use(async (req, res, next) => {
         await jwt.verify(token, process.env.SECRET_KEY, async (err, decoded) => {
             if (err) {
                 return res.status(400).json({
-                    message: "TOKEN expired"
+                    message: "session expired"
                 })
             }
             req.user = decoded.data;
@@ -57,25 +57,6 @@ app.use(async (req, res, next) => {
 
 
 
-
-
-
-// const token = req.headers.authorization;
-// if (token) {
-//     jwt.verify(token, secret, async (err, decoded) => {
-//         if (err) {
-//             return res.status(400).json({
-//                 message: "TOKEN expired"
-//             })
-//         }
-//         res.user = decoded.data;
-//         next()
-//     })
-// } else {
-//     res.status(400).json({
-//         message: "Token is not valid"
-//     })
-// }
 
 
 
